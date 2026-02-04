@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untuk Kamu 🤍</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(180deg,#fbc2eb,#a6c1ee);
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+.screen{
+  position:absolute;
+  width:100%;
+  max-width:420px;
+  padding:20px;
+  text-align:center;
+  opacity:0;
+  pointer-events:none;
+  transform:rotateY(25deg);
+  transition:all 1.2s ease;
+}
+.screen.active{
+  opacity:1;
+  pointer-events:auto;
+  transform:rotateY(0deg);
+}
+.emoji{
+  font-size:70px;
+  margin-bottom:15px;
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+  100%{transform:translateY(0)}
+}
+.card{
+  background:rgba(255,255,255,.65);
+  backdrop-filter:blur(12px);
+  padding:25px;
+  border-radius:25px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+p{
+  font-size:16px;
+  line-height:1.9;
+  color:#2c3e50;
+  min-height:120px;
+}
+.btn{
+  margin-top:20px;
+  padding:14px 30px;
+  background:#4a6cff;
+  color:#fff;
+  border:none;
+  border-radius:30px;
+  font-size:16px;
+}
+
+/* LOGIN */
+.dots{display:flex;justify-content:center;gap:14px;margin:18px 0}
+.dot{width:16px;height:16px;border:2px solid #4a6cff;border-radius:50%}
+.dot.fill{background:#4a6cff}
+.keypad{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.keypad button{
+  height:60px;
+  font-size:22px;
+  border:none;
+  border-radius:15px;
+  background:#fff;
+  box-shadow:0 5px 15px rgba(0,0,0,.15);
+}
+</style>
+</head>
+<body>
+
+<!-- AUDIO (FIX: TANPA AUTOPLAY) -->
+<audio id="bgm" loop playsinline>
+  <source src="https://files.catbox.moe/y6dwlh.mp3" type="audio/mpeg">
+</audio>
+
+<!-- LOGIN -->
+<div class="screen active" id="login">
+  <div class="emoji" id="face">😚</div>
+  <h3>Masukin password dulu</h3>
+  <div class="dots" id="dots"></div>
+  <div class="keypad">
+    <button onclick="press(1)">1</button><button onclick="press(2)">2</button><button onclick="press(3)">3</button>
+    <button onclick="press(4)">4</button><button onclick="press(5)">5</button><button onclick="press(6)">6</button>
+    <button onclick="press(7)">7</button><button onclick="press(8)">8</button><button onclick="press(9)">9</button>
+    <button onclick="reset()">⌫</button><button onclick="press(0)">0</button><button onclick="reset()">✖</button>
+  </div>
+</div>
+
+<!-- SLIDE 1 -->
+<div class="screen" id="s1">
+  <div class="emoji">🐣</div>
+  <div class="card">
+    <p id="t1"></p>
+    <button class="btn" onclick="go('s1','s2')">Lanjut</button>
+  </div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="screen" id="s2">
+  <div class="emoji">🙂</div>
+  <div class="card">
+    <p id="t2"></p>
+    <button class="btn" onclick="go('s2','s3')">Lanjut</button>
+  </div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="screen" id="s3">
+  <div class="emoji">😊</div>
+  <div class="card">
+    <p id="t3"></p>
+    <button class="btn" onclick="go('s3','s4')">Lanjut</button>
+  </div>
+</div>
+
+<!-- PANTUN 1 -->
+<div class="screen" id="s4">
+  <div class="emoji">🌸</div>
+  <div class="card">
+    <p id="t4"></p>
+    <button class="btn" onclick="go('s4','s5')">Lanjut</button>
+  </div>
+</div>
+
+<!-- PANTUN 2 -->
+<div class="screen" id="s5">
+  <div class="emoji">🌷</div>
+  <div class="card">
+    <p id="t5"></p>
+    <button class="btn" onclick="go('s5','s6')">Lanjut</button>
+  </div>
+</div>
+
+<!-- PANTUN ISI -->
+<div class="screen" id="s6">
+  <div class="emoji">😁😆</div>
+  <div class="card">
+    <p id="t6"></p>
+  </div>
+</div>
+
+<script>
+const PASSWORD="2012";
+let input="";
+const face=document.getElementById("face");
+const dots=document.getElementById("dots");
+const bgm=document.getElementById("bgm");
+
+for(let i=0;i<PASSWORD.length;i++){
+  const d=document.createElement("div");
+  d.className="dot";
+  dots.appendChild(d);
+}
+
+function press(n){
+  if(input.length>=PASSWORD.length) return;
+  input+=n; updateDots();
+  if(input.length===PASSWORD.length){
+    if(input===PASSWORD){
+      face.textContent="😍";
+      bgm.play(); // 🔊 LAGU MULAI (FIX)
+      go('login','s1');
+    }else{
+      face.textContent="😤";
+      setTimeout(()=>face.textContent="😚",600);
+      reset();
+    }
+  }
+}
+function reset(){input="";updateDots()}
+function updateDots(){
+  document.querySelectorAll(".dot").forEach((d,i)=>d.classList.toggle("fill",i<input.length));
+}
+
+const texts={
+  t1:"Aku nggak tahu sejak kapan…",
+  t2:"Jujur aja,\nsetiap kali mikirin kamu…",
+  t3:"Aku selalu senyum sendiri.\nKata orang mah,\nlagi jatuh cinta.",
+  t4:"Pergi sore menikmati senja,\nlangit merah terasa indah.",
+  t5:"Langkah kecil jadi bermakna,\nsaat kamu hadir di hidupku.",
+  t6:"Jadi izinkan aku jujur…\nI love you 🤍"
+};
+
+function typeText(id){
+  const el=document.getElementById(id);
+  el.innerHTML="";
+  let i=0,t=texts[id];
+  (function typing(){
+    if(i>=t.length) return;
+    el.innerHTML+=t[i]==="\n"?"<br>":t[i];
+    setTimeout(typing,t[i++]==="."?500:60);
+  })();
+}
+
+function go(a,b){
+  document.getElementById(a).classList.remove("active");
+  document.getElementById(b).classList.add("active");
+  const tid="t"+b.slice(1);
+  if(texts[tid]) typeText(tid);
+}
+</script>
+
+</body>
+</html>
